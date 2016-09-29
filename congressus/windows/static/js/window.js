@@ -102,6 +102,15 @@ $(document).ready(function() {
         });
     }
 
+    function ajaxsend() {
+        $.post($("form").attr('action'), $("form").serialize(),
+            function(response) {
+                var pdf = window.open('data:application/pdf;base64,' + btoa(response));
+                pdf.addEventListener('load', function() { pdf.print(); }, false);
+            });
+    }
+    window.ajaxsend = ajaxsend;
+
     $(document).keypress(function(key) {
         if (key.which == 13) {
             if ($("#alertify").length > 0 && ! $("#alertify").hasClass('alertify-hidden')) {
