@@ -1,5 +1,6 @@
 <html lang="en">
   <head>
+	<meta http-equiv="refresh" content="60">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,6 +43,27 @@
                 scales: {
                     xAxes: [{stacked: true}],
                     yAxes: [{stacked: true}]
+                },
+                animation: {
+                    duration: 1,
+                    onComplete: function() {
+							// render the value of the chart above the bar
+							var ctx = this.chart.ctx;
+							ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+							ctx.fillStyle = this.chart.config.options.defaultFontColor;
+							ctx.textAlign = 'center';
+							ctx.textBaseline = 'bottom';
+							this.data.datasets.forEach(function (dataset) {
+								for (var i = 0; i < dataset.data.length; i++) {
+									var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+									var posy = model.y;
+									if (model.datasetLabel == 'pendientes') {
+										posy += 12;
+									}
+									ctx.fillText(dataset.data[i], model.x + 15, posy);
+								}
+							});
+                    }
                 }
             }
         });

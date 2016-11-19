@@ -11,8 +11,14 @@ from tickets.models import Ticket
 
 class Command(BaseCommand):
 
+    def add_arguments(self, parser):
+        parser.add_argument('event')
+        parser.add_argument('-ss', nargs='+')
+
     def handle(self, *args, **options):
-        ev = Event.objects.filter(slug='sicab')
+        session_days = options['ss']
+
+        ev = Event.objects.filter(slug=options['event'])
         template = loader.get_template('dashboard/access.html')
 
         res = {
@@ -21,7 +27,10 @@ class Command(BaseCommand):
         }
 
         # Create labels and dataset
-        sessions = Session.objects.filter(space__event=ev).order_by('start')
+        query = Session.objects.filter(space__event=ev)
+        if session_days:
+            query = query.filter(start__day__in=session_days)
+        sessions = query.order_by('start')
 
         dlabels = []
         dused = []
@@ -44,16 +53,19 @@ class Command(BaseCommand):
         res['labels'] = dlabels
 
         dataset = {}
-        dataset['hoverBackgroundColor'] = 'rgba(0,255,0,1)'
-        dataset['backgroundColor'] = 'rgba(0,255,0,0.7)'
+        dataset['hoverBackgroundColor'] = 'rgba(75,192,192,1.0)'
+        dataset['backgroundColor'] = 'rgba(75,192,192,0.4)'
+        dataset['borderColor'] = 'rgba(75,192,192,1)'
         dataset['data'] = dused
         dataset['label'] = 'usados'
         res['datasets'].append(dataset)
 
         dataset = {}
-        dataset['hoverBackgroundColor'] = 'rgba(255,0,0,1)'
-        dataset['backgroundColor'] = 'rgba(255,0,0,0.7)'
+        dataset['hoverBackgroundColor'] = 'rgba(255,99,132,1.0)'
+        dataset['backgroundColor'] = 'rgba(255,99,132,0.4)'
+        dataset['borderColor'] = 'rgba(255,99,132,1.0)'
         dataset['data'] = dtotal
         dataset['label'] = 'pendientes'
         res['datasets'].append(dataset)
         return template.render({'data': res})
+
