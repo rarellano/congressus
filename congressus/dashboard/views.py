@@ -301,6 +301,54 @@ class GeneralView(TemplateView):
         res['datasets'].append(dataset)
         return res
 
+    def get_access_bar(self, type, timestep, max):
+        strftime, delta = self.get_timesteps_vars(timestep)
+        now = timezone.localtime(timezone.now())
+        min_date = now - delta*max
+        res = deepcopy(self.DATA_BAR)
+
+        # Create labels and dataset
+        sessions = Session.objects.filter(space__event=self.ev).order_by('start')
+
+        dlabels = []
+        dused = []
+        dtotal = []
+        from invs.models import Invitation
+        from invs.models import InvitationType
+        from invs.models import InvUsedInSession
+        for session in sessions:
+            tickets = Ticket.objects.filter(session=session, confirmed=True)
+            used_tic = tickets.filter(used=True).count()
+
+            invs_type = InvitationType.objects.filter(sessions__in=[session])
+            invs = Invitation.objects.filter(type__in=invs_type)
+            used_inv = InvUsedInSession.objects.filter(inv__in=invs, session=session).count()
+
+            dlabels.append(session.space.slug + " " + session.slug + " tickets")
+            dlabels.append(session.space.slug + " " + session.slug + " inv")
+            dused.append(used_tic)
+            dused.append(used_inv)
+            dtotal.append(len(tickets) - used_tic)
+            dtotal.append(len(invs) - used_inv)
+
+        res['labels'] = dlabels
+
+        dataset = {}
+        color, alpha = self.get_random_color(True)
+        dataset['hoverBackgroundColor'] = 'rgba(0,255,0,1)'
+        dataset['backgroundColor'] = 'rgba(0,255,0,0.7)'
+        dataset['data'] = dused
+        dataset['label'] = 'usados'
+        res['datasets'].append(dataset)
+
+        dataset = {}
+        color, alpha = self.get_random_color(True)
+        dataset['hoverBackgroundColor'] = 'rgba(255,0,0,1)'
+        dataset['backgroundColor'] = 'rgba(255,0,0,0.7)'
+        dataset['data'] = dtotal
+        dataset['label'] = 'pendientes'
+        res['datasets'].append(dataset)
+        return res
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(GeneralView, self).get_context_data(*args, **kwargs)
@@ -334,6 +382,8 @@ class GeneralView(TemplateView):
             chart = self.get_pie('access', timestep, max)
         elif type_chart == 'ws_b':
             chart = self.get_bar('sale', timestep, max)
+        elif type_chart == 'a_bs':
+            chart = self.get_access_bar('sale', timestep, max)
         else:
             chart = None
         tdata, tchart = type_chart.split('_')

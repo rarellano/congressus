@@ -54,6 +54,14 @@ function fill_charts() {
         } else if (type_chart == 'b') {
             type = 'bar';
             options = {yAxes: [{ ticks: { beginAtZero: true }}]};
+        } else if (type_chart == 'bs') {
+            type = 'horizontalBar';
+            options = {
+                scales: {
+                    xAxes: [{stacked: true}],
+                    yAxes: [{stacked: true}]
+                }
+            };
         }
         window.data_charts[type_data].push(new Chart(ctx, {
             type: type,

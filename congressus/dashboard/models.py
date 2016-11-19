@@ -13,6 +13,7 @@ CHARTS = (
     ('ws_p', _('Window sales pie')),
     ('a_p', _('Access pie')),
     ('ws_b', _('Window sales bar')),
+    ('a_bs', _('Window access bar stacked')),
 )
 TIMESTEPS = (
     ('daily', _('daily')),
