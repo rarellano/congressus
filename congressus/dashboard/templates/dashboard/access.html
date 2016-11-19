@@ -32,7 +32,7 @@
     <script>
         // Example
         // var data = {'datasets': [{'label': 'usados', 'data': [680, 857, 1452, 3870, 3068, 3021, 867, 439, 1, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'backgroundColor': 'rgba(0,255,0,0.7)', 'hoverBackgroundColor': 'rgba(0,255,0,1)'}, {'label': 'pendientes', 'data': [11, 21847, 32, 28131, 45, 19180, 76, 4507, 642, 21931, 464, 4055, 1695, 22001, 569, 621, 1258, 3890, 358, 22001, 385, 570], 'backgroundColor': 'rgba(255,0,0,0.7)', 'hoverBackgroundColor': 'rgba(255,0,0,1)'}], 'labels': ['recinto martes tickets', 'recinto martes inv', 'recinto miercoles tickets', 'recinto miercoles inv', 'recinto jueves tickets', 'recinto jueves inv', 'espectaculo jueves tickets', 'espectaculo jueves inv', 'recinto viernes tickets', 'recinto viernes inv', 'espectaculo viernes tickets', 'espectaculo viernes inv', 'recinto sabado tickets', 'recinto sabado inv', 'espectaculo sabado-manana tickets', 'espectaculo sabado-manana inv', 'espectaculo sabado-tarde tickets', 'espectaculo sabado-tarde inv', 'recinto domingo tickets', 'recinto domingo inv', 'espectaculo domingo tickets', 'espectaculo domingo inv']};
-        var data = {{data}};
+        var data = {{data|safe}};
         var canvas = $('#canvas');
         var ctx = canvas.get(0).getContext("2d");
         chart = new Chart(ctx, {
